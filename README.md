@@ -1,51 +1,68 @@
-# Intelligent Robot Grab (機器人抓取智能化)
+# Smart Library Book Pose Recognition System (智慧圖書館書籍姿態辨識系統)
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)]()
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange)]()
+[![Python](https://img.shields.io/badge/Python-3.10-blue)]()
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0-orange)]()
 [![License](https://img.shields.io/badge/License-MIT-green)]()
 
-> **NCU ME5301 深度學習專案設計 (Deep Learning Project Design) - 2025 期末專題**
+> **NCU ME5301 深度學習專案設計 - 第 1 組：無人圖書館 (Unmanned Library)**
 
 ## 📖 專案簡介 (Introduction)
 
-本專案旨在解決工業自動化中「傳統型 (Traditional)」機械手臂抓取的限制。傳統機械手臂依賴固定座標，缺乏彈性；本專案透過深度學習技術，實現「智能型 (Intelligent)」機器人抓取，結合電腦視覺與深度神經網路，使機械手臂能夠辨識並抓取非結構化擺放的物體。
+在現代圖書館管理中，雖然借還流程已大幅數位化，但**實體書架的盤點與整理**仍高度依賴人力。書籍常出現倒放、平放或書背未朝外等情況，導致書架混亂且尋書困難。
+
+本專案旨在開發一套**書籍姿態與封面辨識系統**，透過深度學習 (Deep Learning) 技術自動偵測書籍在架上的擺放狀態。
 
 ### 核心目標
-* **智能化識別**：取代傳統示教 (Teaming) 或固定座標模式。
-* **多樣化抓取**：針對吸盤 (Suction Cup) 或平行夾爪 (Parallel-Jaw Gripper) 進行優化。
+* **自動化整架**：解決人工檢查耗時費力的痛點。
+* **姿態偵測**：精準辨識四種常見擺放狀態（正常、倒放、平放、書背不朝外）。
+* **未來應用**：結合機械手臂實現自動歸位與精準尋書。
 
 ## 📂 資料集 (Dataset)
 
-> **⚠️ Note:** 本專案使用**100% 自行建立**的資料集，以符合實際場域需求。
+本專案資料集為 **100% 自行建立**，拍攝於**中央大學圖書館 (NCU Library)** 3~6 樓藏書區。
 
-* **資料集名稱**: (請填寫，例如: NCU-Grab-2025)
-* **資料蒐集方式**: 
-    * (在此描述你們如何拍攝，例如：使用 Realsense D435 拍攝、架設環境、光源設定)
-    * (描述資料增強 Data Augmentation 的方法)
-* **資料量**: 
-    * Training Set: X 張
-    * Validation Set: Y 張
-    * Test Set: Z 張
-* **標註工具**: (例如: LabelImg, Roboflow)
+* **資料量**: 約 600+ 張影像 (持續擴充中)
+* **資料劃分**: Train (80%) / Validation (10%) / Test (10%)
+* **標註工具**: [Roboflow](https://roboflow.com/) (支援 AI 輔助標註與多人協作)
+* **資料擴增 (Augmentation)**: 幾何變換 (旋轉/翻轉)、亮度對比調整、遮擋與裁切。
+
+### 標註類別 (Classes)
+
+我們定義了以下四種書籍擺放姿態進行模型訓練：
+
+| Class Name | Label | 說明 (Description) | 標註框顏色 |
+| :--- | :--- | :--- | :--- |
+| **正常擺放** | `book` | 書籍垂直站立，書背朝外，文字方向正確 | 🟣 紫色 |
+| **倒放** | `reverse` | 書籍垂直站立，但書背文字上下顛倒 | 🟡 黃色 |
+| **平放** | `flat` | 書籍橫躺或斜躺，非垂直狀態 | 🟠 橘色 |
+| **書背不朝外** | `backward` | 書的封面、封底或切口朝外，無法辨識書背 | 🔴 紅色 |
 
 ## 🏗️ 模型架構 (Model Architectures)
 
-本專案由團隊成員分別開發不同的神經網路模型，並進行效能比較。
+本團隊針對此任務設計並比較了兩種神經網路架構：
 
-| 成員 | 模型名稱 | 架構類型 | 特點/創新點 | 準確率 (Accuracy) |
-| :--- | :--- | :--- | :--- | :--- |
-| 成員 A | **Baseline-CNN** | **Pure CNN** (必選) | 使用純捲積神經網路架構，無預訓練模型 | 92.5% |
-| 成員 B | (例如: ResNet50-Transfer) | Transfer Learning | 使用 ImageNet 預訓練權重進行微調 | 95.1% |
-| 成員 C | (例如: YOLOv8-Custom) | Object Detection | 針對即時抓取速度優化 | mAP 0.88 |
-| 成員 D | (例如: Vision Transformer) | Transformer | 使用 Attention 機制捕捉全局特徵 | 94.8% |
+### 1. Pure CNN (Custom Architecture)
+> **特點**: 輕量級、結構簡單，作為 Baseline 模型。
+* **Input**: 640x640 RGB 影像
+* **架構**: 
+    * 2 層卷積層 (Convolutional Layers, 3x3 kernel)
+    * 2 層最大池化層 (Max Pooling)
+    * 2 層全連接層 (Fully Connected Layers)
+* **Activation**: ReLU (Hidden), Softmax (Output)
 
-*(註：依據課程規範，本專案包含至少一組純 CNN 架構模型。)*
+### 2. ResNet-18 (Transfer Learning)
+> **特點**: 利用預訓練權重提升特徵提取能力，解決深層網路梯度消失問題。
+* **Backbone**: PyTorch 官方預訓練 ResNet-18
+* **修改**: 
+    * 將最後一層 FC layer 修改為 4 類輸出。
+    * 加入 Dropout Layer 以提升泛化能力。
+* **Weights**: ImageNet Pre-trained weights
 
 ## 🚀 環境安裝與執行 (Installation & Usage)
 
-本專案主要基於 **Python** 與 **PyTorch** 開發。
+本專案開發環境基於 **Python 3.10** 與 **PyTorch 2.0**。
 
 ### 1. Clone Repository
 ```bash
-git clone [https://github.com/your-username/intelligent-robot-grab.git](https://github.com/your-username/intelligent-robot-grab.git)
-cd intelligent-robot-grab
+git clone [https://github.com/your-username/smart-library-pose-recognition.git](https://github.com/your-username/smart-library-pose-recognition.git)
+cd smart-library-pose-recognition
