@@ -1,0 +1,29 @@
+<annotation>
+	<folder></folder>
+	<filename>-_1170_jpg-_jpg.rf.922d9860d42a0508d443aee347832084.jpg</filename>
+	<path>-_1170_jpg-_jpg.rf.922d9860d42a0508d443aee347832084.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>593</width>
+		<height>593</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>book</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>1</xmin>
+			<xmax>591</xmax>
+			<ymin>1</ymin>
+			<ymax>592</ymax>
+		</bndbox>
+	</object>
+	<metadata>
+	</metadata>
+</annotation>
