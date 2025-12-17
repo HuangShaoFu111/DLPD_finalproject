@@ -1,0 +1,20 @@
+# Core Deep Learning
+torch
+torchvision
+torchaudio --index-url https://download.pytorch.org/whl/cu118
+# 注意: 上面這行是為了 CUDA 11.8。如果安裝失敗，建議手動使用 Conda 指令安裝 PyTorch。
+
+# Data Processing & Visualization
+numpy
+pandas
+matplotlib
+seaborn
+pillow
+scikit-learn
+tqdm
+
+# Jupyter Kernel
+ipykernel
+
+# Computer Vision (Webcam)
+opencv-python
