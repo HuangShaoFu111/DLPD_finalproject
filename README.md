@@ -10,20 +10,20 @@
 
 [cite_start]在現代圖書館管理中，雖然借還流程已大幅數位化，但**實體書架的盤點與整理**仍高度依賴人力。書籍常出現倒放、平放或書背未朝外等情況，導致書架混亂且尋書困難 [cite: 185-187, 296-298]。
 
-[cite_start]本專案旨在開發一套**書籍姿態與封面辨識系統**，透過深度學習 (Deep Learning) 技術自動偵測書籍在架上的擺放狀態 [cite: 189, 300]。
+本專案旨在開發一套**書籍姿態與封面辨識系統**，透過深度學習 (Deep Learning) 技術自動偵測書籍在架上的擺放狀態。
 
 ### 核心目標
-* [cite_start]**自動化整架**：解決人工檢查耗時費力的痛點 [cite: 192]。
-* [cite_start]**姿態偵測**：精準辨識四種常見擺放狀態（正常、倒放、平放、書背不朝外）[cite: 190]。
-* [cite_start]**未來應用**：結合機械手臂實現自動歸位與精準尋書 [cite: 192]。
+* **自動化整架**：解決人工檢查耗時費力的痛點。
+* **姿態偵測**：精準辨識四種常見擺放狀態（正常、倒放、平放、書背不朝外）。
+* **未來應用**：結合機械手臂實現自動歸位與精準尋書。
 
 ## 📂 資料集 (Dataset)
 
-[cite_start]本專案資料集為 **100% 自行建立**，拍攝於**中央大學圖書館 (NCU Library)** 3~6 樓藏書區 [cite: 196, 197]。
+本專案資料集為 **100% 自行建立**，拍攝於**中央大學圖書館 (NCU Library)** 3~6 樓藏書區。
 
-* [cite_start]**資料量**: 約 600+ 張影像 (持續擴充中) [cite: 285]。
-* [cite_start]**資料劃分**: Train (80%) / Validation (10%) / Test (10%) [cite: 284]。
-* [cite_start]**標註工具**: [Roboflow](https://roboflow.com/) (支援 AI 輔助標註與多人協作) [cite: 203, 334]。
+* **資料量**: 約 600+ 張影像 (持續擴充中)。
+* **資料劃分**: Train (80%) / Validation (10%) / Test (10%)。
+* **標註工具**: [Roboflow](https://roboflow.com/) (支援 AI 輔助標註與多人協作)。
 * [cite_start]**資料擴增 (Augmentation)**: 幾何變換 (旋轉/翻轉)、亮度對比調整、遮擋與裁切 [cite: 341-344]。
 
 ### 標註類別 (Classes)
@@ -39,28 +39,18 @@
 
 ## 🏗️ 模型架構 (Model Architectures)
 
-[cite_start]本團隊針對此任務設計並比較了兩種神經網路架構 [cite: 349-358]：
+為符合課程要求與探索不同神經網路特性，本團隊採用 **PyTorch** 實現了四種截然不同的模型架構進行效能比較：
 
-### 1. Pure CNN (Custom Architecture)
-> [cite_start]**特點**: 輕量級、結構簡單，作為 Baseline 模型 [cite: 349]。
-* **Input**: 640x640 RGB 影像
-* **架構**: 
-    * 2 層卷積層 (Convolutional Layers, 3x3 kernel)
-    * 2 層最大池化層 (Max Pooling)
-    * 2 層全連接層 (Fully Connected Layers)
-* **Activation**: ReLU (Hidden), Softmax (Output)
-
-### 2. ResNet-18 (Transfer Learning)
-> [cite_start]**特點**: 利用預訓練權重提升特徵提取能力，解決深層網路梯度消失問題 [cite: 351, 355]。
-* **Backbone**: PyTorch 官方預訓練 ResNet-18
-* **修改**: 
-    * 將最後一層 FC layer 修改為 4 類輸出。
-    * 加入 Dropout Layer 以提升泛化能力。
-* **Weights**: ImageNet Pre-trained weights
+| 成員 | 模型名稱 | 架構類型 | 特點與職責 |
+| :--- | :--- | :--- | :--- |
+| **黃紹輔** | **Pure CNN** | **Custom CNN** | **[Baseline]** 從零建構的輕量級卷積神經網路，驗證基礎特徵提取能力，不依賴預訓練權重。 |
+| **陳昱誠** | **YOLOv8** | **Object Detection** | **[Real-time]** 使用單階段偵測算法 (One-stage Detector)，專注於多目標偵測與即時推論速度。 |
+| **王宇廷** | **ResNet-18** | **Transfer Learning** | **[Deep Residual]** 引入殘差連接 (Skip Connection) 解決深層梯度問題，並使用 ImageNet 預訓練權重進行微調。 |
+| **林宥臣** | **ViT** | **Transformer** | **[Attention]** Vision Transformer。捨棄傳統卷積，利用 Self-Attention 機制捕捉全域特徵，探索非 CNN 架構的可能性。 |
 
 ## 🚀 環境安裝與執行 (Installation & Usage)
 
-[cite_start]本專案開發環境基於 **Python 3.10** 與 **PyTorch 2.0** [cite: 361]。
+本專案開發環境基於 **Python 3.10** 與 **PyTorch 2.0**。
 
 ### 1. Clone Repository
 ```bash
