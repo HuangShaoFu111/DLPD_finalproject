@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 4
+names: ['backward', 'book', 'flat', 'reverse']
+
+roboflow:
+  workspace: hsf-rbg1n
+  project: 2-dgv8s
+  version: 3
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/hsf-rbg1n/2-dgv8s/dataset/3
